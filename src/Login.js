@@ -14,7 +14,7 @@ export function Login(props) {
                 if(response.data.data.roles.includes('ROLE_ADMIN')) {
                     // console.log("login success")
                     localStorage.setItem("user", JSON.stringify(response.data.data));
-                    navigate("/admin")
+                    navigate("/user-mng")
                     notification.success({
                         message: 'Đăng nhập thành công',
                         // description: 'Tên đăng nhập hoặc mật khẩu không đúng'

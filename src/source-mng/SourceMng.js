@@ -1,18 +1,33 @@
 import {useEffect, useState} from "react";
 import {useSearchParams} from "react-router-dom";
-import {Button, Descriptions, Divider, Form, Input, List, Modal, notification, Switch, Table, Tooltip} from "antd";
+import {
+    Button,
+    Descriptions,
+    Divider,
+    Form,
+    Input, InputNumber,
+    List,
+    Modal,
+    notification,
+    Select,
+    Switch,
+    Table,
+    Tooltip
+} from "antd";
 import {EditOutlined, ExclamationCircleOutlined, LockOutlined, ReloadOutlined, UnlockOutlined} from "@ant-design/icons";
 import UserService from "../service/UserService";
 import Search from "antd/es/input/Search";
 import SourceService from "../service/SourceService";
+import {Option} from "antd/es/mentions";
 
 export function SourceMng(props) {
     const [data, setData] = useState([])
     const [currentPage, setCurrentPage] = useState()
     const [total, setTotal] = useState()
     const [visibleSourceInfo, setVisibleSourceInfo] = useState(false)
-    const [visibleEditUserInfo, setVisibleEditUserInfo] = useState(false)
+    const [visibleEditSourceInfo, setVisibleEditSourceInfo] = useState(false)
     const [currentSourceInfo, setCurrentSourceInfo] = useState({})
+    const [frequencyFormItemHidden, setFrequencyFormItemHidden] = useState(false)
     const [searchParams, setSearchParams] = useSearchParams()
     const [form] = Form.useForm();
     const {confirm} = Modal;
@@ -113,13 +128,23 @@ export function SourceMng(props) {
                         <Tooltip title="Sửa">
                             <Button onClick={() => {
                                 setCurrentSourceInfo(record)
-                                form.setFieldsValue({
-                                    id: record.id,
-                                    username: record.username,
-                                    email: record.email,
-                                    status: record.status === 1
-                                })
-                                setVisibleEditUserInfo(true)
+                                if(record.mode === 1) {
+                                    form.setFieldsValue({
+                                        id: record.id,
+                                        name: record.name,
+                                        mode: "Tần suất",
+                                        status: record.status === 1
+                                    })
+                                } else {
+                                    setFrequencyFormItemHidden(true)
+                                    form.setFieldsValue({
+                                        id: record.id,
+                                        name: record.name,
+                                        mode: "Tùy chỉnh",
+                                        status: record.status === 1
+                                    })
+                                }
+                                setVisibleEditSourceInfo(true)
                             }}>
                                 <EditOutlined/>
                             </Button>
@@ -364,14 +389,24 @@ export function SourceMng(props) {
                         }}>Đóng</Button>,
                         <Button type="primary"
                                 onClick={() => {
-                                    form.setFieldsValue({
-                                        id: currentSourceInfo.id,
-                                        username: currentSourceInfo.username,
-                                        email: currentSourceInfo.email,
-                                        status: currentSourceInfo.status === 1
-                                    })
+                                    if(currentSourceInfo.mode === 1) {
+                                        form.setFieldsValue({
+                                            id: currentSourceInfo.id,
+                                            name: currentSourceInfo.name,
+                                            mode: "Tần suất",
+                                            status: currentSourceInfo.status === 1
+                                        })
+                                    } else {
+                                        setFrequencyFormItemHidden(true)
+                                        form.setFieldsValue({
+                                            id: currentSourceInfo.id,
+                                            name: currentSourceInfo.name,
+                                            mode: "Tùy chỉnh",
+                                            status: currentSourceInfo.status === 1
+                                        })
+                                    }
                                     setVisibleSourceInfo(false)
-                                    setVisibleEditUserInfo(true)
+                                    setVisibleEditSourceInfo(true)
                                 }}
                         >
                             Sửa
@@ -411,10 +446,10 @@ export function SourceMng(props) {
             </div>
             <div>
                 <Modal
-                    title="Sửa thông tin tài khoản"
-                    visible={visibleEditUserInfo}
+                    title="Cấu hình chi tiết nguồn tin"
+                    visible={visibleEditSourceInfo}
                     onCancel={() => {
-                        setVisibleEditUserInfo(false)
+                        setVisibleEditSourceInfo(false)
                     }}
                     footer={[
                         // <Button onClick={() => {
@@ -436,28 +471,42 @@ export function SourceMng(props) {
                             <Input disabled={true}/>
                         </Form.Item>
                         <Form.Item
-                            name="username"
-                            label="Tên đăng nhập"
+                            name="name"
+                            label="Tên nguồn tin"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Tên đăng nhập không được đẻ trống!',
+                                    message: 'Tên nguồn tin không được đẻ trống!',
                                 },
                             ]}
                         >
                             <Input/>
                         </Form.Item>
                         <Form.Item
-                            name="email"
-                            label="Email"
+                            name="mode"
+                            label="Chế độ"
+                            valuePropName="value"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Email không được đẻ trống!',
+                                    message: 'Chế độ không được đẻ trống!',
                                 },
                             ]}
                         >
-                            <Input/>
+                            <Select style={{
+                                width: 150
+                            }}>
+                                <Option value="1">Tần suất</Option>
+                                <Option value="2">Tùy chỉnh</Option>
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            name="frequency"
+                            label="Tần suất"
+                            hidden={frequencyFormItemHidden}
+                            // valuePropName="checked"
+                        >
+                            <InputNumber addonAfter="lần / 1 ngày" step={2} max={12} min={2} style={{width: 150}}/>
                         </Form.Item>
                         <Form.Item
                             name="status"
