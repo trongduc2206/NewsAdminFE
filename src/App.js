@@ -4,7 +4,7 @@ import {MainLayout} from "./Layout";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {UserMng} from "./user-mng/UserMng";
 import {Login} from "./Login";
-import {SourceMng} from "./source-mng/SourceMng";
+import SourceMng from "./source-mng/SourceMng";
 
 function App() {
     const currentUser = JSON.parse(localStorage.getItem('user'));
