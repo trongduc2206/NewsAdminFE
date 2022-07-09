@@ -53,26 +53,26 @@ export function SourceMng(props) {
         console.log("on tree loading")
         TopicService.getTopicDisplay().then(
             response => {
-                if(response.data.data) {
+                if (response.data.data) {
                     const convertToTree = response.data.data.map((topic) => {
                         return (
                             {
                                 title: topic.label,
                                 value: topic.key,
                                 children: topic.children ? topic.children.map((childLv2) => {
-                                    return {
-                                        title:childLv2.label,
-                                        value: childLv2.key,
-                                        children: childLv2.children ? childLv2.children.map((childLv3) => {
-                                                return {
-                                                    title: childLv3.label,
-                                                    value: childLv3.key
-                                                }
-                                            })
-                                            : null
-                                    }
+                                        return {
+                                            title: childLv2.label,
+                                            value: childLv2.key,
+                                            children: childLv2.children ? childLv2.children.map((childLv3) => {
+                                                    return {
+                                                        title: childLv3.label,
+                                                        value: childLv3.key
+                                                    }
+                                                })
+                                                : null
+                                        }
                                     })
-                                    :null
+                                    : null
                             }
                         )
                     })
@@ -88,62 +88,47 @@ export function SourceMng(props) {
             key: 'topicList',
             render: (text, record, index) => {
                 console.log(record)
-                if (record.topicList.length > 0) {
+                const topicList = record.topicCrawls.map(topicCrawl => topicCrawl.topicKey)
+                // if (record.topicCrawls.length > 0) {
+                if (topicList.length > 0) {
                     return (
                         <List
-                            dataSource={record.topicList}
+                            // dataSource={record.topicList}
+                            dataSource={topicList}
                             renderItem={(item) => (
                                 <List.Item>
-                                        <TreeSelect
-                                            value = {item}
-                                            onChange={(value) => {
-                                                setDataDisplay(dataDisplay.map((crawl) => {
-                                                    if (record.crawlTime === crawl.crawlTime) {
-                                                        crawl.topicList = crawl.topicList.map((topic) => {
-                                                            if (topic == item) {
-                                                                topic = value
-                                                            }
-                                                            return topic
-                                                        })
-                                                    }
-                                                    return crawl
-                                                }))
-                                            }}
-                                            treeData={treeData}
-                                            // treeData={[
-                                            //     {
-                                            //         value: "test1",
-                                            //         title: "Test 1",
-                                            //         children: [
-                                            //             {
-                                            //                 value: "test1-1",
-                                            //                 title: "Test 1-1",
-                                            //                 children: [
-                                            //                     {
-                                            //                         value: "test1-1-1",
-                                            //                         title: "Test 1-1-1",
-                                            //                     },
-                                            //                     {
-                                            //                         value: "test1-1-2",
-                                            //                         title: "Test 1-1-2",
-                                            //                     },
-                                            //                 ]
-                                            //             }
-                                            //         ]
-                                            //     }
-                                            // ]}
-                                            // loadData={() => {console.log("onload")}}
-                                        />
-                                         {/*: <span>{item}</span>*/}
-                                     {/*}*/}
-                                    {record.topicList.length > 1 ?
+                                    <TreeSelect
+                                        value={item}
+                                        onChange={(value) => {
+                                            setDataDisplay(dataDisplay.map((crawl) => {
+                                                if (record.crawlTime === crawl.crawlTime) {
+                                                    crawl.topicCrawls = crawl.topicCrawls.map((topicCrawl) => {
+                                                        if (topicCrawl.topicKey == item) {
+                                                            topicCrawl.topicKey = value
+                                                        }
+                                                        return topicCrawl
+                                                    })
+                                                }
+                                                return crawl
+                                            }))
+                                        }}
+                                        treeData={treeData}
+                                    />
+                                    {/*: <span>{item}</span>*/}
+                                    {/*}*/}
+                                    {record.topicCrawls.length > 1 ?
                                         <Button icon={<MinusOutlined/>}
                                                 onClick={() => {
                                                     // setDataDisplay(prevState => prevState.map((crawl) => {
                                                     setDataDisplay(dataDisplay.map((crawl) => {
-                                                        const topicList = crawl.topicList
-                                                        if (topicList.length > 1) {
+                                                        const topicCrawls = crawl.topicCrawls
+                                                        if (topicCrawls.length > 1) {
                                                             crawl.topicList = topicList.filter(topic => topic !== item)
+                                                            crawl.topicCrawls = topicCrawls.filter((topicCrawl) => {
+                                                                {
+                                                                    return topicCrawl.topicKey !== item
+                                                                }
+                                                            })
                                                         }
                                                         return crawl
                                                     }))
@@ -157,53 +142,78 @@ export function SourceMng(props) {
                     )
                 } else {
                     return (
-                        // <Select
-                        //     onSelect={(values, options) => {
-                        //         setDataDisplay(dataDisplay.map((crawl) => {
-                        //             if (record.crawlTime === crawl.crawlTime) {
-                        //                 crawl.topicList.push(values)
-                        //             }
-                        //             return crawl
-                        //         }))
-                        //         const tmpDataCallApi = dataToCallApi
-                        //         console.log(new Date(), dataToCallApi)
-                        //     }}
-                        // >
-                        //     <Option value="test1">Test1</Option>
-                        //     <Option value="test2">Test2</Option>
-                        // </Select>
                         <TreeSelect
                             onSelect={(value) => {
                                 setDataDisplay(dataDisplay.map((crawl) => {
-                                                if (record.crawlTime === crawl.crawlTime) {
-                                                    crawl.topicList.push(value)
+                                    if (record.crawlTime === crawl.crawlTime) {
+                                        crawl.topicCrawls.push({topicKey: value, crawlUrl: ""})
+                                        // crawl.topicList.push(value)
+                                    }
+                                    return crawl
+                                }))
+                            }}
+                            treeData={treeData}
+                        />
+                    )
+                }
+            }
+        },
+        {
+            title: "Đường dẫn",
+            render: (text, record, index) => {
+                console.log(record)
+                const crawlUrls = record.topicCrawls.map(topicCrawl => topicCrawl.crawlUrl)
+                if (crawlUrls.length > 0) {
+                    return (
+                        <List
+                            dataSource={crawlUrls}
+                            renderItem={(item) => (
+                                <List.Item>
+                                    <Input defaultValue={item}
+                                        onChange={(values) => {
+                                            // console.log(values)
+                                            // console.log(values.target.value)
+                                            setDataDisplay(dataDisplay.map((crawl) => {
+                                                if(crawl.crawlTime === record.crawlTime) {
+                                                    const topicCrawls = crawl.topicCrawls
+                                                    crawl.topicCrawls = topicCrawls.map((topicCrawl) => {
+                                                        if(topicCrawl.crawlUrl === item) {
+                                                            topicCrawl.crawlUrl = values.target.value
+                                                        }
+                                                        return topicCrawl
+                                                    })
+                                                    console.log(crawl)
+                                                    // debugger
                                                 }
                                                 return crawl
                                             }))
+                                        }}
+                                    />
+                                </List.Item>
+                            )}
+                        />
+                    )
+                } else {
+                    return (
+                        <Input
+                            onChange={(values) => {
+                                // console.log(values)
+                                // console.log(values.target.value)
+                                setDataDisplay(dataDisplay.map((crawl) => {
+                                    if(crawl.crawlTime === record.crawlTime) {
+                                        const topicCrawls = crawl.topicCrawls
+                                        crawl.topicCrawls = topicCrawls.map((topicCrawl) => {
+                                            if(topicCrawl.crawlUrl === '') {
+                                                topicCrawl.crawlUrl = values.target.value
+                                            }
+                                            return topicCrawl
+                                        })
+                                        console.log(crawl)
+                                        debugger
+                                        return crawl
+                                    }
+                                }))
                             }}
-                            // treeData={[
-                            //     {
-                            //         value: "test1",
-                            //         title: "Test 1",
-                            //         children: [
-                            //             {
-                            //                 value: "test1-1",
-                            //                 title: "Test 1-1",
-                            //                 children: [
-                            //                     {
-                            //                         value: "test1-1-1",
-                            //                         title: "Test 1-1-1",
-                            //                     },
-                            //                     {
-                            //                         value: "test1-1-2",
-                            //                         title: "Test 1-1-2",
-                            //                     },
-                            //                 ]
-                            //             }
-                            //         ]
-                            //     }
-                            // ]}
-                            treeData={treeData}
                         />
                     )
                 }
@@ -259,28 +269,33 @@ export function SourceMng(props) {
                                 onClick={() => {
                                     // setDataDisplay(prevState => prevState.filter(item => item.crawlTime !== record.crawlTime))
                                     setDataDisplay(dataDisplay.filter(item => item.crawlTime !== record.crawlTime))
-
-                                    changeSourceCustomData(sourceCustomData.filter(item => item.crawlTime !== record.crawlTime))
-
+                                    // changeSourceCustomData(sourceCustomData.filter(item => item.crawlTime !== record.crawlTime))
                                     // setDataToCallApi(prevState => prevState.filter(item => item.crawlTime !== record.crawlTime))
-                                    // setDataToCallApi(dataToCallApi.filter(item => item.crawlTime !== record.crawlTime))
                                 }}
                         ></Button>
-                        {  record.topicList[record.topicList.length - 1] === "" || record.topicList.length == 0 ? null
-                           :
-                            <Button icon={<PlusOutlined/>}
-                                    onClick={() => {
-                                        setDataDisplay(dataDisplay.map((crawl) => {
-                                            if (crawl.crawlTime === record.crawlTime) {
-                                                // const newTopic = "new-topic-" + Math.random()
-                                                const newTopic = ""
-                                                crawl.topicList.push(newTopic)
-                                            }
-                                            return crawl
-                                        }))
-                                    }}
-                            >
-                            </Button>
+                        {/*{  record.topicList[record.topicList.length - 1] === "" || record.topicList.length == 0 ? null*/}
+                        {record.topicCrawls[record.topicCrawls.length - 1] ? (
+                            record.topicCrawls[record.topicCrawls.length - 1].topicKey === ''
+                            || record.topicCrawls[record.topicCrawls.length - 1].crawlUrl === ''
+                            || record.topicCrawls.length == 0 ? null
+                                :
+                                <Button icon={<PlusOutlined/>}
+                                        onClick={() => {
+                                            // debugger
+                                            setDataDisplay(dataDisplay.map((crawl) => {
+                                                if (crawl.crawlTime === record.crawlTime) {
+                                                    // const newTopic = "new-topic-" + Math.random()
+                                                    // const newTopic = ""
+                                                    // crawl.topicList.push(newTopic)
+                                                    const newTopicCrawl = {topicKey: "", crawlUrl: ""}
+                                                    crawl.topicCrawls.push(newTopicCrawl)
+                                                }
+                                                return crawl
+                                            }))
+                                        }}
+                                >
+                                </Button>
+                        ) : null
                         }
                         {/*</div>*/}
                     </Space>
@@ -295,9 +310,32 @@ export function SourceMng(props) {
             key: 'topicList',
             render: (text, record, index) => {
                 console.log(record)
+                const topicList = record.topicCrawls.map((topicCrawl) => {
+                    return topicCrawl.topicKey
+                })
                 return (
                     <List
-                        dataSource={record.topicList}
+                        // dataSource={record.topicList}
+                        dataSource={topicList}
+                        renderItem={(item) => (
+                            <List.Item>
+                                <span>{item}</span>
+                            </List.Item>
+                        )}
+                    />
+                )
+            }
+        },
+        {
+            title: "Đường dẫn",
+            key: "crawlUrl",
+            render: (text, record, index) => {
+                const crawlUrls = record.topicCrawls.map((topicCrawl) => {
+                    return topicCrawl.crawlUrl
+                })
+                return (
+                    <List
+                        dataSource={crawlUrls}
                         renderItem={(item) => (
                             <List.Item>
                                 <span>{item}</span>
@@ -386,6 +424,7 @@ export function SourceMng(props) {
                             <Button onClick={() => {
                                 setCurrentSourceInfo(record)
                                 if (record.mode === 1) {
+                                    setDataDisplay([])
                                     setFrequencyFormItemHidden(false)
                                     setCustomFormItemHidden(true)
                                     form.setFieldsValue({
@@ -407,7 +446,7 @@ export function SourceMng(props) {
                                         id: record.id,
                                         name: record.name,
                                         mode: "Tùy chỉnh",
-                                        custom: record.sourceCrawls,
+                                        // custom: record.sourceCrawls,
                                         status: record.status === 1
                                     })
                                 }
@@ -416,84 +455,6 @@ export function SourceMng(props) {
                                 <EditOutlined/>
                             </Button>
                         </Tooltip>
-                        {/*{*/}
-                        {/*    record.status === 0 ?*/}
-                        {/*        <Tooltip title="Mở khóa">*/}
-                        {/*            <Button onClick={() => {*/}
-                        {/*                confirm({*/}
-                        {/*                    title: "Bạn có chắc muốn mở khóa tài khoản " + record.username,*/}
-                        {/*                    icon: <ExclamationCircleOutlined/>,*/}
-                        {/*                    onOk() {*/}
-                        {/*                        const newRecord = record*/}
-                        {/*                        newRecord.status = 1*/}
-                        {/*                        console.log(newRecord)*/}
-                        {/*                        UserService.update(newRecord).then(*/}
-                        {/*                            response => {*/}
-                        {/*                                notification.success({*/}
-                        {/*                                    message: 'Mở khóa thành công',*/}
-                        {/*                                    // description: 'Tên đăng nhập hoặc mật khẩu không đúng'*/}
-                        {/*                                })*/}
-                        {/*                                window.location.reload()*/}
-                        {/*                            }*/}
-                        {/*                        ).catch(*/}
-                        {/*                            error => {*/}
-                        {/*                                console.log(error)*/}
-                        {/*                                notification.error({*/}
-                        {/*                                    message: 'Mở khóa tài khoản thất bại',*/}
-                        {/*                                    description: error.response.data.status.messages*/}
-                        {/*                                })*/}
-                        {/*                            }*/}
-                        {/*                        )*/}
-                        {/*                    },*/}
-                        {/*                    onCancel() {*/}
-                        {/*                        // console.log('Cancel');*/}
-                        {/*                    }*/}
-                        {/*                })*/}
-                        {/*            }}*/}
-                        {/*                    style={{marginLeft: '5px', color: "#3acf6b"}}*/}
-                        {/*            >*/}
-                        {/*                <UnlockOutlined/>*/}
-                        {/*            </Button>*/}
-                        {/*        </Tooltip>*/}
-                        {/*        :*/}
-                        {/*        <Tooltip title="Khóa">*/}
-                        {/*            <Button onClick={() => {*/}
-                        {/*                confirm({*/}
-                        {/*                    title: "Bạn có chắc muốn khóa tài khoản " + record.username,*/}
-                        {/*                    icon: <ExclamationCircleOutlined/>,*/}
-                        {/*                    onOk() {*/}
-                        {/*                        const newRecord = record*/}
-                        {/*                        newRecord.status = 0*/}
-                        {/*                        console.log(newRecord)*/}
-                        {/*                        UserService.update(newRecord).then(*/}
-                        {/*                            response => {*/}
-                        {/*                                notification.success({*/}
-                        {/*                                    message: 'Khóa thành công',*/}
-                        {/*                                    // description: 'Tên đăng nhập hoặc mật khẩu không đúng'*/}
-                        {/*                                })*/}
-                        {/*                                window.location.reload()*/}
-                        {/*                            }*/}
-                        {/*                        ).catch(*/}
-                        {/*                            error => {*/}
-                        {/*                                console.log(error)*/}
-                        {/*                                notification.error({*/}
-                        {/*                                    message: 'Khóa tài khoản thất bại',*/}
-                        {/*                                    description: error.response.data.status.messages*/}
-                        {/*                                })*/}
-                        {/*                            }*/}
-                        {/*                        )*/}
-                        {/*                    },*/}
-                        {/*                    onCancel() {*/}
-                        {/*                        // console.log('Cancel');*/}
-                        {/*                    }*/}
-                        {/*                })*/}
-                        {/*            }}*/}
-                        {/*                    style={{marginLeft: '5px', color: "red"}}*/}
-                        {/*            >*/}
-                        {/*                <LockOutlined/>*/}
-                        {/*            </Button>*/}
-                        {/*        </Tooltip>*/}
-                        {/*}*/}
                     </div>
                 )
             }
@@ -503,11 +464,10 @@ export function SourceMng(props) {
     const onLoginFormFinish = (values) => {
         const allValue = form.getFieldsValue(true)
         console.log("all values ", allValue)
-        if (currentSourceInfo.mode === 1) {
+        if (currentSourceInfo.mode === "1") {
 
         } else {
-            // values.custom = dataToCallApi
-            values.custom = dataDisplay
+            values.sourceCrawls = dataDisplay
         }
         console.log(values)
         const user = values
@@ -612,7 +572,7 @@ export function SourceMng(props) {
 
         TopicService.getTopicDisplay().then(
             response => {
-                if(response.data.data) {
+                if (response.data.data) {
                     const convertToTree = response.data.data.map((topic) => {
                         return (
                             {
@@ -620,7 +580,7 @@ export function SourceMng(props) {
                                 value: topic.key,
                                 children: topic.children ? topic.children.map((childLv2) => {
                                         return {
-                                            title:childLv2.label,
+                                            title: childLv2.label,
                                             value: childLv2.key,
                                             children: childLv2.children ? childLv2.children.map((childLv3) => {
                                                     return {
@@ -631,7 +591,7 @@ export function SourceMng(props) {
                                                 : null
                                         }
                                     })
-                                    :null
+                                    : null
                             }
                         )
                     })
@@ -684,6 +644,7 @@ export function SourceMng(props) {
             />
             <div>
                 <Modal
+                    width={900}
                     title="Thông tin nguồn tin"
                     visible={visibleSourceInfo}
                     onCancel={() => {
@@ -717,7 +678,7 @@ export function SourceMng(props) {
                                             name: currentSourceInfo.name,
                                             mode: "Tùy chỉnh",
                                             status: currentSourceInfo.status === 1,
-                                            custom: currentSourceInfo.sourceCrawls
+                                            // custom: currentSourceInfo.sourceCrawls
                                         })
                                     }
                                     setVisibleSourceInfo(false)
@@ -763,6 +724,7 @@ export function SourceMng(props) {
             </div>
             <div>
                 <Modal
+                    width={900}
                     title="Cấu hình chi tiết nguồn tin"
                     visible={visibleEditSourceInfo}
                     destroyOnClose={true}
@@ -816,7 +778,21 @@ export function SourceMng(props) {
                         >
                             <Select style={{
                                 width: 150
-                            }}>
+                            }}
+                                //:todo handle on select
+                                    onSelect={(value) => {
+                                        console.log(value)
+                                        if (value === "1") {
+                                            console.log("frequency")
+                                            setFrequencyFormItemHidden(false)
+                                            setCustomFormItemHidden(true)
+                                        } else {
+                                            console.log("custom")
+                                            setFrequencyFormItemHidden(true)
+                                            setCustomFormItemHidden(false)
+                                        }
+                                    }}
+                            >
                                 <Option value="1">Tần suất</Option>
                                 <Option value="2">Tùy chỉnh</Option>
                             </Select>
@@ -845,10 +821,10 @@ export function SourceMng(props) {
                                             onClick={() => {
                                                 const newCrawlTime = Math.random()
                                                 const newEmptyRow = {
-                                                    topicList: [],
+                                                    topicCrawls: [{topicKey: '', crawlUrl: ""}],
                                                     crawlTime: "new-" + newCrawlTime,
                                                 }
-                                                debugger
+                                                // debugger
                                                 setDataDisplay([...dataDisplay, newEmptyRow])
                                                 setDataToCallApi(prevState => [...prevState, newEmptyRow])
                                                 // setDataToCallApi( [...dataToCallApi, newEmptyRow])
