@@ -9,6 +9,13 @@ class SourceService {
     searchByUsername(name, page, offset) {
         return axios.get(MAIN_URL + "/search", {params: {page: page, offset: offset, name: name}})
     }
+    update(request) {
+        console.log("call api update with request ", request)
+        return axios.put(MAIN_URL + "/update", request)
+    }
+    create(request) {
+        return axios.post(MAIN_URL + "/create", request)
+    }
 }
 
 export default new SourceService();

@@ -38,16 +38,23 @@ export function SourceMng(props) {
     const [total, setTotal] = useState()
     const [visibleSourceInfo, setVisibleSourceInfo] = useState(false)
     const [visibleEditSourceInfo, setVisibleEditSourceInfo] = useState(false)
+    const [visibleAddSourceInfo, setVisibleAddSourceInfo] = useState(false)
     const [currentSourceInfo, setCurrentSourceInfo] = useState({})
     const [frequencyFormItemHidden, setFrequencyFormItemHidden] = useState(false)
+    const [frequencyAddFormItemHidden, setFrequencyAddFormItemHidden] = useState(true)
     const [customFormItemHidden, setCustomFormItemHidden] = useState(false)
+    const [customAddFormItemHidden, setCustomAddFormItemHidden] = useState(true)
     const [searchParams, setSearchParams] = useSearchParams()
     const [form] = Form.useForm();
+    const [addForm] = Form.useForm();
     const {confirm} = Modal;
     const [dataDisplay, setDataDisplay] = useState([])
+    const [dataDisplayAdd, setDataDisplayAdd] = useState([])
     const [dataToCallApi, setDataToCallApi] = useState([])
     const [treeData, setTreeData] = useState([])
     const customData = []
+    const [disabledMinutes, setDisabledMinutes] = useState([])
+    const [disabledMinutesAddForm, setDisabledMinutesAddForm] = useState([])
 
     const onLoadTreeData = () => {
         console.log("on tree loading")
@@ -170,24 +177,24 @@ export function SourceMng(props) {
                             renderItem={(item) => (
                                 <List.Item>
                                     <Input defaultValue={item}
-                                        onChange={(values) => {
-                                            // console.log(values)
-                                            // console.log(values.target.value)
-                                            setDataDisplay(dataDisplay.map((crawl) => {
-                                                if(crawl.crawlTime === record.crawlTime) {
-                                                    const topicCrawls = crawl.topicCrawls
-                                                    crawl.topicCrawls = topicCrawls.map((topicCrawl) => {
-                                                        if(topicCrawl.crawlUrl === item) {
-                                                            topicCrawl.crawlUrl = values.target.value
-                                                        }
-                                                        return topicCrawl
-                                                    })
-                                                    console.log(crawl)
-                                                    // debugger
-                                                }
-                                                return crawl
-                                            }))
-                                        }}
+                                           onChange={(values) => {
+                                               // console.log(values)
+                                               // console.log(values.target.value)
+                                               setDataDisplay(dataDisplay.map((crawl) => {
+                                                   if (crawl.crawlTime === record.crawlTime) {
+                                                       const topicCrawls = crawl.topicCrawls
+                                                       crawl.topicCrawls = topicCrawls.map((topicCrawl) => {
+                                                           if (topicCrawl.crawlUrl === item) {
+                                                               topicCrawl.crawlUrl = values.target.value
+                                                           }
+                                                           return topicCrawl
+                                                       })
+                                                       console.log(crawl)
+                                                       // debugger
+                                                   }
+                                                   return crawl
+                                               }))
+                                           }}
                                     />
                                 </List.Item>
                             )}
@@ -200,10 +207,10 @@ export function SourceMng(props) {
                                 // console.log(values)
                                 // console.log(values.target.value)
                                 setDataDisplay(dataDisplay.map((crawl) => {
-                                    if(crawl.crawlTime === record.crawlTime) {
+                                    if (crawl.crawlTime === record.crawlTime) {
                                         const topicCrawls = crawl.topicCrawls
                                         crawl.topicCrawls = topicCrawls.map((topicCrawl) => {
-                                            if(topicCrawl.crawlUrl === '') {
+                                            if (topicCrawl.crawlUrl === '') {
                                                 topicCrawl.crawlUrl = values.target.value
                                             }
                                             return topicCrawl
@@ -229,30 +236,149 @@ export function SourceMng(props) {
                 return (
                     record.crawlTime.includes("new-") ?
                         <TimePicker format={format} style={{width: 80}}
-                                    onSelect={(values) => {
+                            // onSelect={(values) => {
+                                    onSelect={(value) => {
+                                        console.log(value.format("HH"))
+                                        console.log(dataDisplay)
+                                        const currentHoursDisplay = dataDisplay.map((crawl) => {
+                                            if(crawl.crawlTime.includes("new-")) {
+                                                return ""
+                                            } else {
+                                                // return moment(crawl.crawlTime,"HH:mm").format("HH")
+                                                return {
+                                                    hour: moment(crawl.crawlTime,"HH:mm").format("HH"),
+                                                    minute: parseInt(moment(crawl.crawlTime,"HH:mm").format("mm"))
+                                                }
+                                            }
+                                        })
+                                        const currentMinutesDisplay = dataDisplay.map((crawl) => {
+                                            if(crawl.crawlTime.includes("new-")) {
+                                                return ""
+                                            } else {
+                                                return parseInt(moment(crawl.crawlTime,"HH:mm").format("mm"))
+                                            }
+                                        })
+                                        console.log(currentHoursDisplay)
+                                        console.log(currentMinutesDisplay)
+                                        const timesToDisabled = currentHoursDisplay.filter((time) => {
+                                           return time.hour == value.format("HH")
+                                        })
+                                        const minutesToDisabled = timesToDisabled.map((time) => {
+                                            return time.minute
+                                        })
+                                        console.log(timesToDisabled)
+                                        console.log(minutesToDisabled)
+                                        // if(currentHoursDisplay.includes(value.format("HH"))) {
+                                        //     console.log("set disable minute")
+                                        //     setDisabledMinutes(currentMinutesDisplay)
+                                        // }
+                                        setDisabledMinutes(minutesToDisabled)
+                                    }}
+                                    onChange={(values) => {
                                         // console.log(values.format(format))
                                         const newTime = values.format(format)
                                         // setDataToCallApi(prevState => prevState.map((crawl) => {
-                                        setDataDisplay(dataDisplay.map((crawl) => {
-                                            if (record.crawlTime === crawl.crawlTime) {
-                                                crawl.crawlTime = newTime
-                                            }
-                                            return crawl
-                                        }))
+                                        const currentCrawlTimeList = dataDisplay.map(crawl => crawl.crawlTime)
+                                        console.log(currentCrawlTimeList)
+                                        if (currentCrawlTimeList.includes(newTime)) {
+                                            notification.error({
+                                                message: "Thời gian này đã được chọn"
+                                            })
+                                        } else {
+                                            setDataDisplay(dataDisplay.map((crawl) => {
+                                                if (record.crawlTime === crawl.crawlTime) {
+                                                    crawl.crawlTime = newTime
+                                                }
+                                                return crawl
+                                            }))
+                                        }
                                     }}
+                                    disabledTime={
+                                        () => {
+                                            return {
+                                                disabledMinutes: () => {
+                                                    console.log(disabledMinutes)
+                                                    return disabledMinutes
+                                                }
+                                            }
+                                        }
+                                    }
                         />
-                        : <TimePicker value={value} format={format} style={{width: 80}}
-                                      onSelect={(values) => {
+                        : <TimePicker defaultValue={value} format={format} style={{width: 80}}
+                            // onSelect={(values) => {
+                                      onSelect={(value) => {
+                                          console.log(value.format("HH"))
+                                          console.log(dataDisplay)
+                                          const currentHoursDisplay = dataDisplay.map((crawl) => {
+                                              if(crawl.crawlTime.includes("new-")) {
+                                                  return ""
+                                              } else {
+                                                  // return moment(crawl.crawlTime,"HH:mm").format("HH")
+                                                  return {
+                                                      hour: moment(crawl.crawlTime,"HH:mm").format("HH"),
+                                                      minute: parseInt(moment(crawl.crawlTime,"HH:mm").format("mm"))
+                                                  }
+                                              }
+                                          })
+                                          const currentMinutesDisplay = dataDisplay.map((crawl) => {
+                                              if(crawl.crawlTime.includes("new-")) {
+                                                  return ""
+                                              } else {
+                                                  return parseInt(moment(crawl.crawlTime,"HH:mm").format("mm"))
+                                              }
+                                          })
+                                          console.log(currentHoursDisplay)
+                                          console.log(currentMinutesDisplay)
+                                          const timesToDisabled = currentHoursDisplay.filter((time) => {
+                                              return time.hour == value.format("HH")
+                                          })
+                                          const minutesToDisabled = timesToDisabled.map((time) => {
+                                              return time.minute
+                                          })
+                                          console.log(timesToDisabled)
+                                          console.log(minutesToDisabled)
+                                          // if(currentHoursDisplay.includes(value.format("HH"))) {
+                                          //     console.log("set disable minute")
+                                          //     setDisabledMinutes(currentMinutesDisplay)
+                                          // }
+                                          setDisabledMinutes(minutesToDisabled)
+                                      }}
+                                      onChange={(values) => {
                                           // console.log(values.format(format))
                                           const newTime = values.format(format)
                                           // setDataToCallApi(prevState => prevState.map((crawl) => {
-                                          setDataDisplay(dataDisplay.map((crawl) => {
-                                              if (record.crawlTime === crawl.crawlTime) {
-                                                  crawl.crawlTime = newTime
-                                              }
-                                              return crawl
-                                          }))
+
+                                          const currentCrawlTimeList = dataDisplay.map(crawl => crawl.crawlTime)
+                                          console.log(currentCrawlTimeList)
+                                          if (currentCrawlTimeList.includes(newTime)) {
+                                              notification.error({
+                                                  message: "Thời gian này đã được chọn"
+                                              })
+                                              // setDataDisplay(dataDisplay.map((crawl) => {
+                                              //     if (record.crawlTime === crawl.crawlTime) {
+                                              //         crawl.crawlTime = "new-" + Math.random()
+                                              //     }
+                                              //     return crawl
+                                              // }))
+                                          } else {
+                                              setDataDisplay(dataDisplay.map((crawl) => {
+                                                  if (record.crawlTime === crawl.crawlTime) {
+                                                      crawl.crawlTime = newTime
+                                                  }
+                                                  return crawl
+                                              }))
+                                          }
                                       }}
+                                      disabledTime={
+                                          () => {
+                                              return {
+                                                  disabledMinutes: () => {
+                                                      // console.log(disabledMinutes)
+                                                      return disabledMinutes
+                                                  }
+                                              }
+                                          }
+                                      }
                         />
 
                 )
@@ -283,6 +409,343 @@ export function SourceMng(props) {
                                         onClick={() => {
                                             // debugger
                                             setDataDisplay(dataDisplay.map((crawl) => {
+                                                if (crawl.crawlTime === record.crawlTime) {
+                                                    // const newTopic = "new-topic-" + Math.random()
+                                                    // const newTopic = ""
+                                                    // crawl.topicList.push(newTopic)
+                                                    const newTopicCrawl = {topicKey: "", crawlUrl: ""}
+                                                    crawl.topicCrawls.push(newTopicCrawl)
+                                                }
+                                                return crawl
+                                            }))
+                                        }}
+                                >
+                                </Button>
+                        ) : null
+                        }
+                        {/*</div>*/}
+                    </Space>
+                )
+            }
+        }
+    ]
+    const sourceCrawlAddColumns = [
+        {
+            title: 'Chủ đề',
+            // dataIndex: 'topicList',
+            key: 'topicList',
+            render: (text, record, index) => {
+                console.log(record)
+                const topicList = record.topicCrawls.map(topicCrawl => topicCrawl.topicKey)
+                // if (record.topicCrawls.length > 0) {
+                if (topicList.length > 0) {
+                    return (
+                        <List
+                            // dataSource={record.topicList}
+                            dataSource={topicList}
+                            renderItem={(item) => (
+                                <List.Item>
+                                    <TreeSelect
+                                        value={item}
+                                        onChange={(value) => {
+                                            setDataDisplayAdd(dataDisplayAdd.map((crawl) => {
+                                                if (record.crawlTime === crawl.crawlTime) {
+                                                    crawl.topicCrawls = crawl.topicCrawls.map((topicCrawl) => {
+                                                        if (topicCrawl.topicKey == item) {
+                                                            topicCrawl.topicKey = value
+                                                        }
+                                                        return topicCrawl
+                                                    })
+                                                }
+                                                return crawl
+                                            }))
+                                        }}
+                                        treeData={treeData}
+                                    />
+                                    {/*: <span>{item}</span>*/}
+                                    {/*}*/}
+                                    {record.topicCrawls.length > 1 ?
+                                        <Button icon={<MinusOutlined/>}
+                                                onClick={() => {
+                                                    // setDataDisplay(prevState => prevState.map((crawl) => {
+                                                    setDataDisplayAdd(dataDisplayAdd.map((crawl) => {
+                                                        const topicCrawls = crawl.topicCrawls
+                                                        if (topicCrawls.length > 1) {
+                                                            crawl.topicList = topicList.filter(topic => topic !== item)
+                                                            crawl.topicCrawls = topicCrawls.filter((topicCrawl) => {
+                                                                {
+                                                                    return topicCrawl.topicKey !== item
+                                                                }
+                                                            })
+                                                        }
+                                                        return crawl
+                                                    }))
+                                                }}
+                                        ></Button>
+                                        : null
+                                    }
+                                </List.Item>
+                            )}
+                        />
+                    )
+                } else {
+                    return (
+                        <TreeSelect
+                            onSelect={(value) => {
+                                setDataDisplayAdd(dataDisplayAdd.map((crawl) => {
+                                    if (record.crawlTime === crawl.crawlTime) {
+                                        crawl.topicCrawls.push({topicKey: value, crawlUrl: ""})
+                                        // crawl.topicList.push(value)
+                                    }
+                                    return crawl
+                                }))
+                            }}
+                            treeData={treeData}
+                        />
+                    )
+                }
+            }
+        },
+        {
+            title: "Đường dẫn",
+            render: (text, record, index) => {
+                console.log(record)
+                const crawlUrls = record.topicCrawls.map(topicCrawl => topicCrawl.crawlUrl)
+                if (crawlUrls.length > 0) {
+                    return (
+                        <List
+                            dataSource={crawlUrls}
+                            renderItem={(item) => (
+                                <List.Item>
+                                    <Input defaultValue={item}
+                                           onChange={(values) => {
+                                               // console.log(values)
+                                               // console.log(values.target.value)
+                                               setDataDisplayAdd(dataDisplayAdd.map((crawl) => {
+                                                   if (crawl.crawlTime === record.crawlTime) {
+                                                       const topicCrawls = crawl.topicCrawls
+                                                       crawl.topicCrawls = topicCrawls.map((topicCrawl) => {
+                                                           if (topicCrawl.crawlUrl === item) {
+                                                               topicCrawl.crawlUrl = values.target.value
+                                                           }
+                                                           return topicCrawl
+                                                       })
+                                                       console.log(crawl)
+                                                       // debugger
+                                                   }
+                                                   return crawl
+                                               }))
+                                           }}
+                                    />
+                                </List.Item>
+                            )}
+                        />
+                    )
+                } else {
+                    return (
+                        <Input
+                            onChange={(values) => {
+                                // console.log(values)
+                                // console.log(values.target.value)
+                                setDataDisplayAdd(dataDisplayAdd.map((crawl) => {
+                                    if (crawl.crawlTime === record.crawlTime) {
+                                        const topicCrawls = crawl.topicCrawls
+                                        crawl.topicCrawls = topicCrawls.map((topicCrawl) => {
+                                            if (topicCrawl.crawlUrl === '') {
+                                                topicCrawl.crawlUrl = values.target.value
+                                            }
+                                            return topicCrawl
+                                        })
+                                        console.log(crawl)
+                                        // debugger
+                                        return crawl
+                                    }
+                                }))
+                            }}
+                        />
+                    )
+                }
+            }
+        },
+        {
+            title: 'Thời gian',
+            dataIndex: 'crawlTime',
+            key: 'crawlTime',
+            render: (text, record, index) => {
+                const format = 'HH:mm';
+                const value = moment(record.crawlTime, format)
+                return (
+                    record.crawlTime.includes("new-") ?
+                        <TimePicker format={format} style={{width: 80}}
+                            // onSelect={(values) => {
+                                    onSelect={(value) => {
+                                        console.log(value.format("HH"))
+                                        console.log(dataDisplay)
+                                        const currentHoursDisplay = dataDisplayAdd.map((crawl) => {
+                                            if(crawl.crawlTime.includes("new-")) {
+                                                return ""
+                                            } else {
+                                                // return moment(crawl.crawlTime,"HH:mm").format("HH")
+                                                return {
+                                                    hour: moment(crawl.crawlTime,"HH:mm").format("HH"),
+                                                    minute: parseInt(moment(crawl.crawlTime,"HH:mm").format("mm"))
+                                                }
+                                            }
+                                        })
+                                        const currentMinutesDisplay = dataDisplayAdd.map((crawl) => {
+                                            if(crawl.crawlTime.includes("new-")) {
+                                                return ""
+                                            } else {
+                                                return parseInt(moment(crawl.crawlTime,"HH:mm").format("mm"))
+                                            }
+                                        })
+                                        console.log(currentHoursDisplay)
+                                        console.log(currentMinutesDisplay)
+                                        const timesToDisabled = currentHoursDisplay.filter((time) => {
+                                            return time.hour == value.format("HH")
+                                        })
+                                        const minutesToDisabled = timesToDisabled.map((time) => {
+                                            return time.minute
+                                        })
+                                        console.log(timesToDisabled)
+                                        console.log(minutesToDisabled)
+                                        setDisabledMinutesAddForm(minutesToDisabled)
+                                    }}
+                                    onChange={(values) => {
+                                        // console.log(values.format(format))
+                                        const newTime = values.format(format)
+                                        // setDataToCallApi(prevState => prevState.map((crawl) => {
+                                        const currentCrawlTimeList = dataDisplayAdd.map(crawl => crawl.crawlTime)
+                                        console.log(currentCrawlTimeList)
+                                        if (currentCrawlTimeList.includes(newTime)) {
+                                            notification.error({
+                                                message: "Thời gian này đã được chọn"
+                                            })
+                                        } else {
+                                            setDataDisplayAdd(dataDisplayAdd.map((crawl) => {
+                                                if (record.crawlTime === crawl.crawlTime) {
+                                                    crawl.crawlTime = newTime
+                                                }
+                                                return crawl
+                                            }))
+                                        }
+                                    }}
+                                    disabledTime={
+                                        () => {
+                                            return {
+                                                disabledMinutes: () => {
+                                                    console.log(disabledMinutesAddForm)
+                                                    return disabledMinutesAddForm
+                                                }
+                                            }
+                                        }
+                                    }
+                        />
+                        : <TimePicker defaultValue={value} format={format} style={{width: 80}}
+                            // onSelect={(values) => {
+                                      onSelect={(value) => {
+                                          console.log(value.format("HH"))
+                                          console.log(dataDisplay)
+                                          const currentHoursDisplay = dataDisplayAdd.map((crawl) => {
+                                              if(crawl.crawlTime.includes("new-")) {
+                                                  return ""
+                                              } else {
+                                                  // return moment(crawl.crawlTime,"HH:mm").format("HH")
+                                                  return {
+                                                      hour: moment(crawl.crawlTime,"HH:mm").format("HH"),
+                                                      minute: parseInt(moment(crawl.crawlTime,"HH:mm").format("mm"))
+                                                  }
+                                              }
+                                          })
+                                          const currentMinutesDisplay = dataDisplayAdd.map((crawl) => {
+                                              if(crawl.crawlTime.includes("new-")) {
+                                                  return ""
+                                              } else {
+                                                  return parseInt(moment(crawl.crawlTime,"HH:mm").format("mm"))
+                                              }
+                                          })
+                                          console.log(currentHoursDisplay)
+                                          console.log(currentMinutesDisplay)
+                                          const timesToDisabled = currentHoursDisplay.filter((time) => {
+                                              return time.hour == value.format("HH")
+                                          })
+                                          const minutesToDisabled = timesToDisabled.map((time) => {
+                                              return time.minute
+                                          })
+                                          console.log(timesToDisabled)
+                                          console.log(minutesToDisabled)
+                                          // if(currentHoursDisplay.includes(value.format("HH"))) {
+                                          //     console.log("set disable minute")
+                                          //     setDisabledMinutes(currentMinutesDisplay)
+                                          // }
+                                          setDisabledMinutes(minutesToDisabled)
+                                      }}
+                                      onChange={(values) => {
+                                          // console.log(values.format(format))
+                                          const newTime = values.format(format)
+                                          // setDataToCallApi(prevState => prevState.map((crawl) => {
+
+                                          const currentCrawlTimeList = dataDisplayAdd.map(crawl => crawl.crawlTime)
+                                          console.log(currentCrawlTimeList)
+                                          if (currentCrawlTimeList.includes(newTime)) {
+                                              notification.error({
+                                                  message: "Thời gian này đã được chọn"
+                                              })
+                                              // setDataDisplay(dataDisplay.map((crawl) => {
+                                              //     if (record.crawlTime === crawl.crawlTime) {
+                                              //         crawl.crawlTime = "new-" + Math.random()
+                                              //     }
+                                              //     return crawl
+                                              // }))
+                                          } else {
+                                              setDataDisplayAdd(dataDisplayAdd.map((crawl) => {
+                                                  if (record.crawlTime === crawl.crawlTime) {
+                                                      crawl.crawlTime = newTime
+                                                  }
+                                                  return crawl
+                                              }))
+                                          }
+                                      }}
+                                      disabledTime={
+                                          () => {
+                                              return {
+                                                  disabledMinutes: () => {
+                                                      // console.log(disabledMinutes)
+                                                      return disabledMinutesAddForm
+                                                  }
+                                              }
+                                          }
+                                      }
+                        />
+
+                )
+            }
+        },
+        {
+            key: 'action',
+            render: (text, record, index) => {
+                console.log(record)
+                return (
+                    // <div style={{display: 'flex', flexDirection:'column'}}>
+                    <Space>
+                        <Button icon={<MinusOutlined/>}
+                                onClick={() => {
+                                    // setDataDisplay(prevState => prevState.filter(item => item.crawlTime !== record.crawlTime))
+                                    setDataDisplayAdd(dataDisplayAdd.filter(item => item.crawlTime !== record.crawlTime))
+                                    // changeSourceCustomData(sourceCustomData.filter(item => item.crawlTime !== record.crawlTime))
+                                    // setDataToCallApi(prevState => prevState.filter(item => item.crawlTime !== record.crawlTime))
+                                }}
+                        ></Button>
+                        {/*{  record.topicList[record.topicList.length - 1] === "" || record.topicList.length == 0 ? null*/}
+                        {record.topicCrawls[record.topicCrawls.length - 1] ? (
+                            record.topicCrawls[record.topicCrawls.length - 1].topicKey === ''
+                            || record.topicCrawls[record.topicCrawls.length - 1].crawlUrl === ''
+                            || record.topicCrawls.length == 0 ? null
+                                :
+                                <Button icon={<PlusOutlined/>}
+                                        onClick={() => {
+                                            // debugger
+                                            setDataDisplayAdd(dataDisplayAdd.map((crawl) => {
                                                 if (crawl.crawlTime === record.crawlTime) {
                                                     // const newTopic = "new-topic-" + Math.random()
                                                     // const newTopic = ""
@@ -430,7 +893,8 @@ export function SourceMng(props) {
                                     form.setFieldsValue({
                                         id: record.id,
                                         name: record.name,
-                                        mode: "Tần suất",
+                                        // mode: "Tần suất",
+                                        mode: "1",
                                         frequency: record.frequency,
                                         status: record.status === 1
                                     })
@@ -445,7 +909,8 @@ export function SourceMng(props) {
                                     form.setFieldsValue({
                                         id: record.id,
                                         name: record.name,
-                                        mode: "Tùy chỉnh",
+                                        // mode: "Tùy chỉnh",
+                                        mode: "2",
                                         // custom: record.sourceCrawls,
                                         status: record.status === 1
                                     })
@@ -461,36 +926,83 @@ export function SourceMng(props) {
         }
 
     ]
+    const onAddFormFinish = (values) => {
+        const allValue = addForm.getFieldsValue(true)
+        console.log("all values ", allValue)
+        if (values.mode === "1") {
+            values.sourceCrawls = null
+            values.custom = null
+        } else {
+            values.sourceCrawls = dataDisplayAdd
+            values.frequency = null
+            values.custom = null
+        }
+        console.log(values.mode)
+        // if(values.mode === 'Tần suất') {
+        //     values.mode = 1
+        // } else {
+        //     values.mode = 2
+        // }
+        if (values.status) {
+            values.status = 1
+        } else {
+            values.status = 0
+        }
+        console.log(values)
+        // const user = values
+        // debugger
+        // console.log(user)
+        SourceService.create(values).then(
+            response => {
+                window.location.reload()
+            }
+        ).catch(
+            error => {
+                console.log(error.response.data.status)
+                notification.error({
+                    message: 'Sửa thông tin nguồn tin thất bại',
+                    description: error.response? error.response.data.status.message : ""
+                })
+            }
+        )
+    }
     const onLoginFormFinish = (values) => {
         const allValue = form.getFieldsValue(true)
         console.log("all values ", allValue)
         if (currentSourceInfo.mode === "1") {
-
+            values.custom=null
         } else {
             values.sourceCrawls = dataDisplay
+            values.custom = null
+        }
+        console.log(values.mode)
+        if (values.status) {
+            values.status = 1
+        } else {
+            values.status = 0
         }
         console.log(values)
-        const user = values
-        if (values.status) {
-            user.status = 1
-        } else {
-            user.status = 0
-        }
-        console.log(user)
-        // UserService.update(user).then(
-        //     response => {
-        //         window.location.reload()
-        //     }
-        // ).catch(
-        //     error => {
-        //         notification.error({
-        //             message: 'Sửa thông tin tài khoản thất bại',
-        //             description: error.response.data.status.messages
-        //         })
-        //     }
-        // )
+        // const user = values
+        // debugger
+        // console.log(user)
+        SourceService.update(values).then(
+            response => {
+                window.location.reload()
+            }
+        ).catch(
+            error => {
+                notification.error({
+                    message: 'Sửa thông tin nguồn tin thất bại',
+                    description: error.response? error.response.data.status.message: ""
+                })
+            }
+        )
     }
     const onLoginFormFinishFailed = (values) => {
+        console.log(values)
+    }
+
+    const onAddFormFinishFailed = (values) => {
         console.log(values)
     }
     const onChangePageHandle = (page) => {
@@ -642,6 +1154,14 @@ export function SourceMng(props) {
                        }
                    }}
             />
+            <Tooltip title="Thêm nguồn tin mới">
+                <Button icon={<PlusOutlined/>}
+                        onClick={() => {
+                            setVisibleAddSourceInfo(true)
+                        }}
+                >
+                </Button>
+            </Tooltip>
             <div>
                 <Modal
                     width={900}
@@ -662,7 +1182,8 @@ export function SourceMng(props) {
                                         form.setFieldsValue({
                                             id: currentSourceInfo.id,
                                             name: currentSourceInfo.name,
-                                            mode: "Tần suất",
+                                            // mode: "Tần suất",
+                                            mode: "1",
                                             frequency: currentSourceInfo.frequency,
                                             status: currentSourceInfo.status === 1
                                         })
@@ -676,7 +1197,8 @@ export function SourceMng(props) {
                                         form.setFieldsValue({
                                             id: currentSourceInfo.id,
                                             name: currentSourceInfo.name,
-                                            mode: "Tùy chỉnh",
+                                            // mode: "Tùy chỉnh",
+                                            mode: "2",
                                             status: currentSourceInfo.status === 1,
                                             // custom: currentSourceInfo.sourceCrawls
                                         })
@@ -826,6 +1348,136 @@ export function SourceMng(props) {
                                                 }
                                                 // debugger
                                                 setDataDisplay([...dataDisplay, newEmptyRow])
+                                                setDataToCallApi(prevState => [...prevState, newEmptyRow])
+                                                // setDataToCallApi( [...dataToCallApi, newEmptyRow])
+                                            }}
+                                    >
+                                    </Button>
+                                </div>
+                            </div>
+                        </Form.Item>
+                        <Form.Item
+                            name="status"
+                            label="Trạng thái"
+                            valuePropName="checked"
+                        >
+                            <Switch></Switch>
+                        </Form.Item>
+                        <Form.Item
+                        >
+                            <Button type="primary" htmlType="submit">
+                                Xác nhận
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </Modal>
+            </div>
+            <div>
+                <Modal
+                    width={900}
+                    title="Thêm nguồn tin"
+                    visible={visibleAddSourceInfo}
+                    destroyOnClose={true}
+                    onCancel={() => {
+                        setVisibleAddSourceInfo(false)
+                        setCurrentSourceInfo({})
+                        setFrequencyAddFormItemHidden(true)
+                        setCustomAddFormItemHidden(true)
+                        // console.log("on close")
+                    }}
+                    footer={[
+                        // <Button onClick={() => {
+                        //     setVisibleEditUserInfo(false)
+                        // }}>Hủy</Button>
+                    ]}
+                >
+                    <Form
+                        preserve={false}
+                        form={addForm}
+                        layout="vertical"
+                        name="form_in_add_modal"
+                        onFinish={onAddFormFinish}
+                        onFinishFailed={onAddFormFinishFailed}
+                    >
+                        {/*<Form.Item*/}
+                        {/*    name="id"*/}
+                        {/*    label="ID"*/}
+                        {/*>*/}
+                        {/*    <Input disabled={false}/>*/}
+                        {/*</Form.Item>*/}
+                        <Form.Item
+                            name="name"
+                            label="Tên nguồn tin"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Tên nguồn tin không được đẻ trống!',
+                                },
+                            ]}
+                        >
+                            <Input/>
+                        </Form.Item>
+                        <Form.Item
+                            name="mode"
+                            label="Chế độ"
+                            valuePropName="value"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Chế độ không được để trống!',
+                                },
+                            ]}
+                        >
+                            <Select style={{
+                                width: 150
+                            }}
+                                //:todo handle on select
+                                    onSelect={(value) => {
+                                        console.log(value)
+                                        if (value === "1") {
+                                            console.log("frequency")
+                                            setFrequencyAddFormItemHidden(false)
+                                            setCustomAddFormItemHidden(true)
+                                        } else {
+                                            console.log("custom")
+                                            setFrequencyAddFormItemHidden(true)
+                                            setCustomAddFormItemHidden(false)
+                                        }
+                                    }}
+                            >
+                                <Option value="1">Tần suất</Option>
+                                <Option value="2">Tùy chỉnh</Option>
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            name="frequency"
+                            label="Tần suất"
+                            hidden={frequencyAddFormItemHidden}
+                            valuePropName="value"
+                        >
+                            <InputNumber addonAfter="giờ / 1 lần" step={2} max={12} min={2} style={{width: 150}}/>
+                        </Form.Item>
+                        <Form.Item
+                            name="custom"
+                            label="Tùy chỉnh"
+                            hidden={customAddFormItemHidden}
+                            valuePropName="data"
+                        >
+                            {/*<CustomModeData/>*/}
+                            <div>
+                                <Table columns={sourceCrawlAddColumns} dataSource={dataDisplayAdd}
+                                       pagination={false}
+                                />
+                                <div style={{marginTop: "10px"}}>
+                                    <Button icon={<PlusOutlined/>} style={{marginLeft: 'auto', display: 'block'}}
+                                            onClick={() => {
+                                                const newCrawlTime = Math.random()
+                                                const newEmptyRow = {
+                                                    topicCrawls: [{topicKey: '', crawlUrl: ""}],
+                                                    crawlTime: "new-" + newCrawlTime,
+                                                }
+                                                // debugger
+                                                setDataDisplayAdd([...dataDisplayAdd, newEmptyRow])
                                                 setDataToCallApi(prevState => [...prevState, newEmptyRow])
                                                 // setDataToCallApi( [...dataToCallApi, newEmptyRow])
                                             }}
