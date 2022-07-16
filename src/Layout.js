@@ -42,7 +42,7 @@ export function MainLayout(props) {
             icon: <ExclamationCircleOutlined/>,
             onOk() {
                 localStorage.removeItem("user");
-                navigate("/login")
+                navigate("/")
             },
             onCancel() {
             }
@@ -130,7 +130,7 @@ export function MainLayout(props) {
                         textAlign: 'center',
                     }}
                 >
-                    Ant Design ©2018 Created by Ant UED
+                    Hệ thống quản lý báo điện tử News
                 </Footer>
             </Layout>
         </Layout>

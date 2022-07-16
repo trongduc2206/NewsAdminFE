@@ -3,6 +3,8 @@ import {Content, Footer, Header} from "antd/es/layout/layout";
 import 'antd/dist/antd.min.css';
 import AuthService from "./service/AuthService";
 import {useNavigate} from "react-router-dom";
+import {useEffect} from "react";
+import {LayoutTwoTone} from "@ant-design/icons";
 export function Login(props) {
     const [form] = Form.useForm();
     let navigate = useNavigate();
@@ -35,11 +37,21 @@ export function Login(props) {
             }
         )
     }
+    useEffect(() => {
+        const user = localStorage.getItem('user')
+        if(user) {
+            navigate("/user-mng")
+        }
+    },[])
     return (
         <Layout className="layout" style={{height: '100vh'}}>
-            <Header style={{backgroundColor: "#096dd9"}}>
+            <Header style={{backgroundColor: "#096dd9"}} className="header">
                 {/*<div className="logo"/>*/}
                 {/*/>*/}
+                <div style={{display: 'flex'}}>
+                    <LayoutTwoTone style={{alignItems:'center', marginTop: '23px', fontSize: '20px'}} twoToneColor='#faf14d'/>
+                    <h1 style={{ color:'#faf14d', marginLeft: '3px'}}>News Admin</h1>
+                </div>
             </Header>
             <Content
                 style={{
@@ -104,10 +116,12 @@ export function Login(props) {
             <Footer
                 style={{
                     textAlign: 'center',
-                    backgroundColor: '#faf14d'
+                    backgroundColor: '#faf14d',
+                    fontWeight: 100,
+                    color: '#096dd9'
                 }}
             >
-                Ant Design ©2018 Created by Ant UED
+                Hệ thống quản lý báo điện tử News
             </Footer>
         </Layout>
     )

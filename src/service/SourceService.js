@@ -16,6 +16,12 @@ class SourceService {
     create(request) {
         return axios.post(MAIN_URL + "/create", request)
     }
+    stop(id) {
+        return axios.put(MAIN_URL + "/stop/" + id )
+    }
+    start(id) {
+        return axios.put(MAIN_URL + "/start/" + id)
+    }
 }
 
 export default new SourceService();

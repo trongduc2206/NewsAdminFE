@@ -15,9 +15,10 @@ import {
     Tooltip, TreeDataNode, TreeSelect
 } from "antd";
 import {
+    CloseCircleOutlined,
     EditOutlined,
     ExclamationCircleOutlined,
-    LockOutlined, MinusOutlined,
+    LockOutlined, MinusOutlined, PlayCircleOutlined,
     PlusOutlined,
     ReloadOutlined,
     UnlockOutlined
@@ -920,6 +921,80 @@ export function SourceMng(props) {
                                 <EditOutlined/>
                             </Button>
                         </Tooltip>
+                        {
+                            record.status === 1 ?
+                            <Tooltip title="Dừng hoạt động">
+                                <Button
+                                    style={{marginLeft: '5px', color: 'red'}}
+                                    onClick={() => {
+                                        confirm({
+                                            title: "Bạn có chắc muốn dừng hoạt động nguồn tin " + record.name,
+                                            icon: <ExclamationCircleOutlined/>,
+                                            onOk() {
+                                                SourceService.stop(record.id).then(
+                                                    response => {
+                                                        notification.success({
+                                                            message: 'Dừng hoạt động thành công',
+                                                            // description: 'Tên đăng nhập hoặc mật khẩu không đúng'
+                                                        })
+                                                        window.location.reload()
+                                                    }
+                                                ).catch(
+                                                    error => {
+                                                        console.log(error)
+                                                        notification.error({
+                                                            message: 'Dừng hoạt động thất bại',
+                                                            description: error.response.data.status.messages
+                                                        })
+                                                    }
+                                                )
+                                            },
+                                            onCancel() {
+                                                // console.log('Cancel');
+                                            }
+                                        })
+                                    }}
+                                >
+                                    <CloseCircleOutlined/>
+                                </Button>
+                            </Tooltip>
+                                :
+                                <Tooltip title="Mở hoạt động">
+                                    <Button
+                                        style={{marginLeft: '5px', color: '#3acf6b'}}
+                                        onClick={() => {
+                                            confirm({
+                                                title: "Bạn có chắc muốn mở hoạt động nguồn tin " + record.name,
+                                                icon: <ExclamationCircleOutlined/>,
+                                                onOk() {
+                                                    SourceService.start(record.id).then(
+                                                        response => {
+                                                            notification.success({
+                                                                message: 'Mở hoạt động thành công',
+                                                                // description: 'Tên đăng nhập hoặc mật khẩu không đúng'
+                                                            })
+                                                            window.location.reload()
+                                                        }
+                                                    ).catch(
+                                                        error => {
+                                                            console.log(error)
+                                                            notification.error({
+                                                                message: 'Mở hoạt động thất bại',
+                                                                description: error.response.data.status.messages
+                                                            })
+                                                        }
+                                                    )
+                                                },
+                                                onCancel() {
+                                                    // console.log('Cancel');
+                                                }
+                                            })
+                                        }}
+                                    >
+                                        <PlayCircleOutlined />
+                                    </Button>
+                                </Tooltip>
+                        }
                     </div>
                 )
             }

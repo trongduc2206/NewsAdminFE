@@ -65,12 +65,28 @@ export function UserMng(props) {
             key: 'createTime',
         },
         {
+            title: 'Loại',
+            dataIndex: 'type',
+            key: 'type',
+            render: (text, record, index) => {
+                if(record.type === 'SYSTEM') {
+                    return <span>Hệ thống</span>
+                } else if (record.type === 'FACEBOOK') {
+                    return <span style={{color: '#3b5998'}}>Facebook</span>
+                } else {
+                    return <span style={{color: '#1890ff'}}>Google</span>
+                }
+            }
+        },
+        {
             title: "Hành động",
             key: "action",
             render: (text, record, index) => {
                 // console.log(record)
                 return (
                     <div>
+                        {
+                        record.type === 'SYSTEM' ? (
                         <Tooltip title="Sửa">
                             <Button onClick={() => {
                                 setCurrentUserInfo(record)
@@ -85,7 +101,11 @@ export function UserMng(props) {
                                 <EditOutlined/>
                             </Button>
                         </Tooltip>
+                            )
+                            : null
+                        }
                         {
+                            record.type === 'SYSTEM' ? (
                             record.status === 0 ?
                                 <Tooltip title="Mở khóa">
                                     <Button onClick={() => {
@@ -162,6 +182,7 @@ export function UserMng(props) {
                                         <LockOutlined/>
                                     </Button>
                                 </Tooltip>
+                            ) : null
                         }
                     </div>
                 )
@@ -358,6 +379,10 @@ export function UserMng(props) {
                         <Descriptions.Item label="Ngày cập nhật">{currentUserInfo.updateTime}</Descriptions.Item>
                         <Descriptions.Item
                             label="Trạng thái">{currentUserInfo.status === 1 ? "Mở" : "Khóa"}</Descriptions.Item>
+                        <Descriptions.Item label="Loại">{currentUserInfo.type === 'SYSTEM' ? "Hệ thống"
+                            : (currentUserInfo.type === 'FACEBOOK' ? "Facebook" : "Google")
+                        }
+                        </Descriptions.Item>
                     </Descriptions>
                 </Modal>
             </div>

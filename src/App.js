@@ -28,7 +28,7 @@ function App() {
       {/*</header>*/}
         <BrowserRouter>
             <Routes>
-                <Route path='login' element={<Login/>}/>
+                <Route path='' element={<Login/>}/>
                 {/*<Route path='admin' element={currentUser?<MainLayout content={<UserMng/>}/>:null}/>*/}
                 <Route path='user-mng' element={<MainLayout content={<UserMng/>}/>}/>
                 <Route path='source-mng' element={<MainLayout content={<SourceMng/>}/>}/>
