@@ -44,7 +44,7 @@ export function SourceMng(props) {
     const [frequencyFormItemHidden, setFrequencyFormItemHidden] = useState(false)
     const [frequencyAddFormItemHidden, setFrequencyAddFormItemHidden] = useState(true)
     const [customFormItemHidden, setCustomFormItemHidden] = useState(false)
-    const [customAddFormItemHidden, setCustomAddFormItemHidden] = useState(true)
+    const [customAddFormItemHidden, setCustomAddFormItemHidden] = useState(false)
     const [searchParams, setSearchParams] = useSearchParams()
     const [form] = Form.useForm();
     const [addForm] = Form.useForm();
@@ -861,22 +861,33 @@ export function SourceMng(props) {
             key: 'createTime',
         },
         {
-            title: 'Chế độ',
-            dataIndex: 'mode',
-            key: 'mode',
+            title: 'Tùy chỉnh',
+            key: 'custom',
             render: (text, record, index) => {
-                if (record.mode === 1) {
-                    return (
-                        <span>Theo tần suất</span>
-                    )
+                if(record.sourceCrawls.length > 0) {
+                    return <span>Đã cấu hình</span>
                 } else {
-                    return (
-                        <span>Tùy chọn</span>
-                    )
+                    return <span>Còn trống</span>
                 }
-
             }
         },
+        // {
+        //     title: 'Chế độ',
+        //     dataIndex: 'mode',
+        //     key: 'mode',
+        //     render: (text, record, index) => {
+        //         if (record.mode === 1) {
+        //             return (
+        //                 <span>Theo tần suất</span>
+        //             )
+        //         } else {
+        //             return (
+        //                 <span>Tùy chọn</span>
+        //             )
+        //         }
+        //
+        //     }
+        // },
         {
             title: "Hành động",
             key: "action",
@@ -887,19 +898,19 @@ export function SourceMng(props) {
                         <Tooltip title="Sửa">
                             <Button onClick={() => {
                                 setCurrentSourceInfo(record)
-                                if (record.mode === 1) {
-                                    setDataDisplay([])
-                                    setFrequencyFormItemHidden(false)
-                                    setCustomFormItemHidden(true)
-                                    form.setFieldsValue({
-                                        id: record.id,
-                                        name: record.name,
-                                        // mode: "Tần suất",
-                                        mode: "1",
-                                        frequency: record.frequency,
-                                        status: record.status === 1
-                                    })
-                                } else {
+                                // if (record.mode === 1) {
+                                //     setDataDisplay([])
+                                //     setFrequencyFormItemHidden(false)
+                                //     setCustomFormItemHidden(true)
+                                //     form.setFieldsValue({
+                                //         id: record.id,
+                                //         name: record.name,
+                                //         // mode: "Tần suất",
+                                //         mode: "1",
+                                //         frequency: record.frequency,
+                                //         status: record.status === 1
+                                //     })
+                                // } else {
                                     setFrequencyFormItemHidden(true)
                                     setCustomFormItemHidden(false)
                                     setDataDisplay(record.sourceCrawls)
@@ -915,7 +926,7 @@ export function SourceMng(props) {
                                         // custom: record.sourceCrawls,
                                         status: record.status === 1
                                     })
-                                }
+                                // }
                                 setVisibleEditSourceInfo(true)
                             }}>
                                 <EditOutlined/>
@@ -1251,18 +1262,18 @@ export function SourceMng(props) {
                         }}>Đóng</Button>,
                         <Button type="primary"
                                 onClick={() => {
-                                    if (currentSourceInfo.mode === 1) {
-                                        setFrequencyFormItemHidden(false)
-                                        setCustomFormItemHidden(true)
-                                        form.setFieldsValue({
-                                            id: currentSourceInfo.id,
-                                            name: currentSourceInfo.name,
-                                            // mode: "Tần suất",
-                                            mode: "1",
-                                            frequency: currentSourceInfo.frequency,
-                                            status: currentSourceInfo.status === 1
-                                        })
-                                    } else {
+                                    // if (currentSourceInfo.mode === 1) {
+                                    //     setFrequencyFormItemHidden(false)
+                                    //     setCustomFormItemHidden(true)
+                                    //     form.setFieldsValue({
+                                    //         id: currentSourceInfo.id,
+                                    //         name: currentSourceInfo.name,
+                                    //         // mode: "Tần suất",
+                                    //         mode: "1",
+                                    //         frequency: currentSourceInfo.frequency,
+                                    //         status: currentSourceInfo.status === 1
+                                    //     })
+                                    // } else {
                                         setFrequencyFormItemHidden(true)
                                         setCustomFormItemHidden(false)
                                         setDataDisplay(currentSourceInfo.sourceCrawls)
@@ -1277,7 +1288,7 @@ export function SourceMng(props) {
                                             status: currentSourceInfo.status === 1,
                                             // custom: currentSourceInfo.sourceCrawls
                                         })
-                                    }
+                                    // }
                                     setVisibleSourceInfo(false)
                                     setVisibleEditSourceInfo(true)
                                 }}
@@ -1301,16 +1312,16 @@ export function SourceMng(props) {
                     >
                         <Descriptions.Item label="ID">{currentSourceInfo.id}</Descriptions.Item>
                         <Descriptions.Item label="Tên nguồn tin">{currentSourceInfo.name}</Descriptions.Item>
-                        {currentSourceInfo.mode === 1 ?
-                            <Descriptions.Item
-                                label="Tần suất">{currentSourceInfo.frequency + " giờ/1 lần"}</Descriptions.Item>
-                            :
+                        {/*{currentSourceInfo.mode === 1 ?*/}
+                        {/*    <Descriptions.Item*/}
+                        {/*        label="Tần suất">{currentSourceInfo.frequency + " giờ/1 lần"}</Descriptions.Item>*/}
+                        {/*    :*/}
                             <Descriptions.Item label="Tùy chỉnh">
                                 <Table columns={sourceCrawlsColumns} dataSource={currentSourceInfo.sourceCrawls}
                                        pagination={false}/>
                                 {/*<CustomModeData data={currentSourceInfo.sourceCrawls}/>*/}
                             </Descriptions.Item>
-                        }
+                         {/*}*/}
 
                         <Descriptions.Item label="Ngày tạo">{currentSourceInfo.createTime}</Descriptions.Item>
                         <Descriptions.Item label="Ngày cập nhật">{currentSourceInfo.updateTime}</Descriptions.Item>
@@ -1362,46 +1373,46 @@ export function SourceMng(props) {
                         >
                             <Input/>
                         </Form.Item>
-                        <Form.Item
-                            name="mode"
-                            label="Chế độ"
-                            valuePropName="value"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Chế độ không được để trống!',
-                                },
-                            ]}
-                        >
-                            <Select style={{
-                                width: 150
-                            }}
-                                //:todo handle on select
-                                    onSelect={(value) => {
-                                        console.log(value)
-                                        if (value === "1") {
-                                            console.log("frequency")
-                                            setFrequencyFormItemHidden(false)
-                                            setCustomFormItemHidden(true)
-                                        } else {
-                                            console.log("custom")
-                                            setFrequencyFormItemHidden(true)
-                                            setCustomFormItemHidden(false)
-                                        }
-                                    }}
-                            >
-                                <Option value="1">Tần suất</Option>
-                                <Option value="2">Tùy chỉnh</Option>
-                            </Select>
-                        </Form.Item>
-                        <Form.Item
-                            name="frequency"
-                            label="Tần suất"
-                            hidden={frequencyFormItemHidden}
-                            valuePropName="value"
-                        >
-                            <InputNumber addonAfter="giờ / 1 lần" step={2} max={12} min={2} style={{width: 150}}/>
-                        </Form.Item>
+                        {/*<Form.Item*/}
+                        {/*    name="mode"*/}
+                        {/*    label="Chế độ"*/}
+                        {/*    valuePropName="value"*/}
+                        {/*    rules={[*/}
+                        {/*        {*/}
+                        {/*            required: true,*/}
+                        {/*            message: 'Chế độ không được để trống!',*/}
+                        {/*        },*/}
+                        {/*    ]}*/}
+                        {/*>*/}
+                        {/*    <Select style={{*/}
+                        {/*        width: 150*/}
+                        {/*    }}*/}
+                        {/*        //:todo handle on select*/}
+                        {/*            onSelect={(value) => {*/}
+                        {/*                console.log(value)*/}
+                        {/*                if (value === "1") {*/}
+                        {/*                    console.log("frequency")*/}
+                        {/*                    setFrequencyFormItemHidden(false)*/}
+                        {/*                    setCustomFormItemHidden(true)*/}
+                        {/*                } else {*/}
+                        {/*                    console.log("custom")*/}
+                        {/*                    setFrequencyFormItemHidden(true)*/}
+                        {/*                    setCustomFormItemHidden(false)*/}
+                        {/*                }*/}
+                        {/*            }}*/}
+                        {/*    >*/}
+                        {/*        <Option value="1">Tần suất</Option>*/}
+                        {/*        <Option value="2">Tùy chỉnh</Option>*/}
+                        {/*    </Select>*/}
+                        {/*</Form.Item>*/}
+                        {/*<Form.Item*/}
+                        {/*    name="frequency"*/}
+                        {/*    label="Tần suất"*/}
+                        {/*    hidden={frequencyFormItemHidden}*/}
+                        {/*    valuePropName="value"*/}
+                        {/*>*/}
+                        {/*    <InputNumber addonAfter="giờ / 1 lần" step={2} max={12} min={2} style={{width: 150}}/>*/}
+                        {/*</Form.Item>*/}
                         <Form.Item
                             name="custom"
                             label="Tùy chỉnh"
@@ -1492,46 +1503,46 @@ export function SourceMng(props) {
                         >
                             <Input/>
                         </Form.Item>
-                        <Form.Item
-                            name="mode"
-                            label="Chế độ"
-                            valuePropName="value"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Chế độ không được để trống!',
-                                },
-                            ]}
-                        >
-                            <Select style={{
-                                width: 150
-                            }}
-                                //:todo handle on select
-                                    onSelect={(value) => {
-                                        console.log(value)
-                                        if (value === "1") {
-                                            console.log("frequency")
-                                            setFrequencyAddFormItemHidden(false)
-                                            setCustomAddFormItemHidden(true)
-                                        } else {
-                                            console.log("custom")
-                                            setFrequencyAddFormItemHidden(true)
-                                            setCustomAddFormItemHidden(false)
-                                        }
-                                    }}
-                            >
-                                <Option value="1">Tần suất</Option>
-                                <Option value="2">Tùy chỉnh</Option>
-                            </Select>
-                        </Form.Item>
-                        <Form.Item
-                            name="frequency"
-                            label="Tần suất"
-                            hidden={frequencyAddFormItemHidden}
-                            valuePropName="value"
-                        >
-                            <InputNumber addonAfter="giờ / 1 lần" step={2} max={12} min={2} style={{width: 150}}/>
-                        </Form.Item>
+                        {/*<Form.Item*/}
+                        {/*    name="mode"*/}
+                        {/*    label="Chế độ"*/}
+                        {/*    valuePropName="value"*/}
+                        {/*    rules={[*/}
+                        {/*        {*/}
+                        {/*            required: true,*/}
+                        {/*            message: 'Chế độ không được để trống!',*/}
+                        {/*        },*/}
+                        {/*    ]}*/}
+                        {/*>*/}
+                        {/*    <Select style={{*/}
+                        {/*        width: 150*/}
+                        {/*    }}*/}
+                        {/*        //:todo handle on select*/}
+                        {/*            onSelect={(value) => {*/}
+                        {/*                console.log(value)*/}
+                        {/*                if (value === "1") {*/}
+                        {/*                    console.log("frequency")*/}
+                        {/*                    setFrequencyAddFormItemHidden(false)*/}
+                        {/*                    setCustomAddFormItemHidden(true)*/}
+                        {/*                } else {*/}
+                        {/*                    console.log("custom")*/}
+                        {/*                    setFrequencyAddFormItemHidden(true)*/}
+                        {/*                    setCustomAddFormItemHidden(false)*/}
+                        {/*                }*/}
+                        {/*            }}*/}
+                        {/*    >*/}
+                        {/*        <Option value="1">Tần suất</Option>*/}
+                        {/*        <Option value="2">Tùy chỉnh</Option>*/}
+                        {/*    </Select>*/}
+                        {/*</Form.Item>*/}
+                        {/*<Form.Item*/}
+                        {/*    name="frequency"*/}
+                        {/*    label="Tần suất"*/}
+                        {/*    hidden={frequencyAddFormItemHidden}*/}
+                        {/*    valuePropName="value"*/}
+                        {/*>*/}
+                        {/*    <InputNumber addonAfter="giờ / 1 lần" step={2} max={12} min={2} style={{width: 150}}/>*/}
+                        {/*</Form.Item>*/}
                         <Form.Item
                             name="custom"
                             label="Tùy chỉnh"
