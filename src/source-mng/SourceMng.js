@@ -31,6 +31,7 @@ import {CustomModeData} from "./CustomModeData";
 import moment from "moment";
 import {connect} from "react-redux";
 import TopicService from "../service/TopicService";
+import './css/SourceMng.css'
 
 export function SourceMng(props) {
     const {sourceCustomData, changeSourceCustomData} = props
@@ -65,7 +66,8 @@ export function SourceMng(props) {
                     const convertToTree = response.data.data.map((topic) => {
                         return (
                             {
-                                title: topic.label,
+                                // test: <p>test</p>,
+                                title: <h1 title="test">{topic.label}</h1>,
                                 value: topic.key,
                                 children: topic.children ? topic.children.map((childLv2) => {
                                         return {
@@ -121,6 +123,8 @@ export function SourceMng(props) {
                                             }))
                                         }}
                                         treeData={treeData}
+                                        // treeNodeLabelProp="test"
+                                        // treeExpandAction='click'
                                     />
                                     {/*: <span>{item}</span>*/}
                                     {/*}*/}
@@ -151,6 +155,7 @@ export function SourceMng(props) {
                 } else {
                     return (
                         <TreeSelect
+                            style={{width: '100px'}}
                             onSelect={(value) => {
                                 setDataDisplay(dataDisplay.map((crawl) => {
                                     if (record.crawlTime === crawl.crawlTime) {
@@ -242,27 +247,27 @@ export function SourceMng(props) {
                                         console.log(value.format("HH"))
                                         console.log(dataDisplay)
                                         const currentHoursDisplay = dataDisplay.map((crawl) => {
-                                            if(crawl.crawlTime.includes("new-")) {
+                                            if (crawl.crawlTime.includes("new-")) {
                                                 return ""
                                             } else {
                                                 // return moment(crawl.crawlTime,"HH:mm").format("HH")
                                                 return {
-                                                    hour: moment(crawl.crawlTime,"HH:mm").format("HH"),
-                                                    minute: parseInt(moment(crawl.crawlTime,"HH:mm").format("mm"))
+                                                    hour: moment(crawl.crawlTime, "HH:mm").format("HH"),
+                                                    minute: parseInt(moment(crawl.crawlTime, "HH:mm").format("mm"))
                                                 }
                                             }
                                         })
                                         const currentMinutesDisplay = dataDisplay.map((crawl) => {
-                                            if(crawl.crawlTime.includes("new-")) {
+                                            if (crawl.crawlTime.includes("new-")) {
                                                 return ""
                                             } else {
-                                                return parseInt(moment(crawl.crawlTime,"HH:mm").format("mm"))
+                                                return parseInt(moment(crawl.crawlTime, "HH:mm").format("mm"))
                                             }
                                         })
                                         console.log(currentHoursDisplay)
                                         console.log(currentMinutesDisplay)
                                         const timesToDisabled = currentHoursDisplay.filter((time) => {
-                                           return time.hour == value.format("HH")
+                                            return time.hour == value.format("HH")
                                         })
                                         const minutesToDisabled = timesToDisabled.map((time) => {
                                             return time.minute
@@ -311,21 +316,21 @@ export function SourceMng(props) {
                                           console.log(value.format("HH"))
                                           console.log(dataDisplay)
                                           const currentHoursDisplay = dataDisplay.map((crawl) => {
-                                              if(crawl.crawlTime.includes("new-")) {
+                                              if (crawl.crawlTime.includes("new-")) {
                                                   return ""
                                               } else {
                                                   // return moment(crawl.crawlTime,"HH:mm").format("HH")
                                                   return {
-                                                      hour: moment(crawl.crawlTime,"HH:mm").format("HH"),
-                                                      minute: parseInt(moment(crawl.crawlTime,"HH:mm").format("mm"))
+                                                      hour: moment(crawl.crawlTime, "HH:mm").format("HH"),
+                                                      minute: parseInt(moment(crawl.crawlTime, "HH:mm").format("mm"))
                                                   }
                                               }
                                           })
                                           const currentMinutesDisplay = dataDisplay.map((crawl) => {
-                                              if(crawl.crawlTime.includes("new-")) {
+                                              if (crawl.crawlTime.includes("new-")) {
                                                   return ""
                                               } else {
-                                                  return parseInt(moment(crawl.crawlTime,"HH:mm").format("mm"))
+                                                  return parseInt(moment(crawl.crawlTime, "HH:mm").format("mm"))
                                               }
                                           })
                                           console.log(currentHoursDisplay)
@@ -583,21 +588,21 @@ export function SourceMng(props) {
                                         console.log(value.format("HH"))
                                         console.log(dataDisplay)
                                         const currentHoursDisplay = dataDisplayAdd.map((crawl) => {
-                                            if(crawl.crawlTime.includes("new-")) {
+                                            if (crawl.crawlTime.includes("new-")) {
                                                 return ""
                                             } else {
                                                 // return moment(crawl.crawlTime,"HH:mm").format("HH")
                                                 return {
-                                                    hour: moment(crawl.crawlTime,"HH:mm").format("HH"),
-                                                    minute: parseInt(moment(crawl.crawlTime,"HH:mm").format("mm"))
+                                                    hour: moment(crawl.crawlTime, "HH:mm").format("HH"),
+                                                    minute: parseInt(moment(crawl.crawlTime, "HH:mm").format("mm"))
                                                 }
                                             }
                                         })
                                         const currentMinutesDisplay = dataDisplayAdd.map((crawl) => {
-                                            if(crawl.crawlTime.includes("new-")) {
+                                            if (crawl.crawlTime.includes("new-")) {
                                                 return ""
                                             } else {
-                                                return parseInt(moment(crawl.crawlTime,"HH:mm").format("mm"))
+                                                return parseInt(moment(crawl.crawlTime, "HH:mm").format("mm"))
                                             }
                                         })
                                         console.log(currentHoursDisplay)
@@ -648,21 +653,21 @@ export function SourceMng(props) {
                                           console.log(value.format("HH"))
                                           console.log(dataDisplay)
                                           const currentHoursDisplay = dataDisplayAdd.map((crawl) => {
-                                              if(crawl.crawlTime.includes("new-")) {
+                                              if (crawl.crawlTime.includes("new-")) {
                                                   return ""
                                               } else {
                                                   // return moment(crawl.crawlTime,"HH:mm").format("HH")
                                                   return {
-                                                      hour: moment(crawl.crawlTime,"HH:mm").format("HH"),
-                                                      minute: parseInt(moment(crawl.crawlTime,"HH:mm").format("mm"))
+                                                      hour: moment(crawl.crawlTime, "HH:mm").format("HH"),
+                                                      minute: parseInt(moment(crawl.crawlTime, "HH:mm").format("mm"))
                                                   }
                                               }
                                           })
                                           const currentMinutesDisplay = dataDisplayAdd.map((crawl) => {
-                                              if(crawl.crawlTime.includes("new-")) {
+                                              if (crawl.crawlTime.includes("new-")) {
                                                   return ""
                                               } else {
-                                                  return parseInt(moment(crawl.crawlTime,"HH:mm").format("mm"))
+                                                  return parseInt(moment(crawl.crawlTime, "HH:mm").format("mm"))
                                               }
                                           })
                                           console.log(currentHoursDisplay)
@@ -775,7 +780,7 @@ export function SourceMng(props) {
             render: (text, record, index) => {
                 console.log(record)
                 const topicList = record.topicCrawls.map((topicCrawl) => {
-                    return topicCrawl.topicKey
+                    return topicCrawl.topicName
                 })
                 return (
                     <List
@@ -864,7 +869,7 @@ export function SourceMng(props) {
             title: 'Tùy chỉnh',
             key: 'custom',
             render: (text, record, index) => {
-                if(record.sourceCrawls.length > 0) {
+                if (record.sourceCrawls.length > 0) {
                     return <span>Đã cấu hình</span>
                 } else {
                     return <span>Còn trống</span>
@@ -911,21 +916,21 @@ export function SourceMng(props) {
                                 //         status: record.status === 1
                                 //     })
                                 // } else {
-                                    setFrequencyFormItemHidden(true)
-                                    setCustomFormItemHidden(false)
-                                    setDataDisplay(record.sourceCrawls)
-                                    setDataToCallApi(record.sourceCrawls)
-                                    changeSourceCustomData(record.sourceCrawls)
-                                    // customData=record.sourceCrawls
-                                    // console.log(customData)
-                                    form.setFieldsValue({
-                                        id: record.id,
-                                        name: record.name,
-                                        // mode: "Tùy chỉnh",
-                                        mode: "2",
-                                        // custom: record.sourceCrawls,
-                                        status: record.status === 1
-                                    })
+                                setFrequencyFormItemHidden(true)
+                                setCustomFormItemHidden(false)
+                                setDataDisplay(record.sourceCrawls)
+                                setDataToCallApi(record.sourceCrawls)
+                                changeSourceCustomData(record.sourceCrawls)
+                                // customData=record.sourceCrawls
+                                // console.log(customData)
+                                form.setFieldsValue({
+                                    id: record.id,
+                                    name: record.name,
+                                    // mode: "Tùy chỉnh",
+                                    mode: "2",
+                                    // custom: record.sourceCrawls,
+                                    status: record.status === 1
+                                })
                                 // }
                                 setVisibleEditSourceInfo(true)
                             }}>
@@ -934,41 +939,41 @@ export function SourceMng(props) {
                         </Tooltip>
                         {
                             record.status === 1 ?
-                            <Tooltip title="Dừng hoạt động">
-                                <Button
-                                    style={{marginLeft: '5px', color: 'red'}}
-                                    onClick={() => {
-                                        confirm({
-                                            title: "Bạn có chắc muốn dừng hoạt động nguồn tin " + record.name,
-                                            icon: <ExclamationCircleOutlined/>,
-                                            onOk() {
-                                                SourceService.stop(record.id).then(
-                                                    response => {
-                                                        notification.success({
-                                                            message: 'Dừng hoạt động thành công',
-                                                            // description: 'Tên đăng nhập hoặc mật khẩu không đúng'
-                                                        })
-                                                        window.location.reload()
-                                                    }
-                                                ).catch(
-                                                    error => {
-                                                        console.log(error)
-                                                        notification.error({
-                                                            message: 'Dừng hoạt động thất bại',
-                                                            description: error.response.data.status.messages
-                                                        })
-                                                    }
-                                                )
-                                            },
-                                            onCancel() {
-                                                // console.log('Cancel');
-                                            }
-                                        })
-                                    }}
-                                >
-                                    <CloseCircleOutlined/>
-                                </Button>
-                            </Tooltip>
+                                <Tooltip title="Dừng hoạt động">
+                                    <Button
+                                        style={{marginLeft: '5px', color: 'red'}}
+                                        onClick={() => {
+                                            confirm({
+                                                title: "Bạn có chắc muốn dừng hoạt động nguồn tin " + record.name,
+                                                icon: <ExclamationCircleOutlined/>,
+                                                onOk() {
+                                                    SourceService.stop(record.id).then(
+                                                        response => {
+                                                            notification.success({
+                                                                message: 'Dừng hoạt động thành công',
+                                                                // description: 'Tên đăng nhập hoặc mật khẩu không đúng'
+                                                            })
+                                                            window.location.reload()
+                                                        }
+                                                    ).catch(
+                                                        error => {
+                                                            console.log(error)
+                                                            notification.error({
+                                                                message: 'Dừng hoạt động thất bại',
+                                                                description: error.response.data.status.messages
+                                                            })
+                                                        }
+                                                    )
+                                                },
+                                                onCancel() {
+                                                    // console.log('Cancel');
+                                                }
+                                            })
+                                        }}
+                                    >
+                                        <CloseCircleOutlined/>
+                                    </Button>
+                                </Tooltip>
                                 :
                                 <Tooltip title="Mở hoạt động">
                                     <Button
@@ -1002,7 +1007,7 @@ export function SourceMng(props) {
                                             })
                                         }}
                                     >
-                                        <PlayCircleOutlined />
+                                        <PlayCircleOutlined/>
                                     </Button>
                                 </Tooltip>
                         }
@@ -1047,7 +1052,7 @@ export function SourceMng(props) {
                 console.log(error.response.data.status)
                 notification.error({
                     message: 'Sửa thông tin nguồn tin thất bại',
-                    description: error.response? error.response.data.status.message : ""
+                    description: error.response ? error.response.data.status.message : ""
                 })
             }
         )
@@ -1056,7 +1061,7 @@ export function SourceMng(props) {
         const allValue = form.getFieldsValue(true)
         console.log("all values ", allValue)
         if (currentSourceInfo.mode === "1") {
-            values.custom=null
+            values.custom = null
         } else {
             values.sourceCrawls = dataDisplay
             values.custom = null
@@ -1079,7 +1084,7 @@ export function SourceMng(props) {
             error => {
                 notification.error({
                     message: 'Sửa thông tin nguồn tin thất bại',
-                    description: error.response? error.response.data.status.message: ""
+                    description: error.response ? error.response.data.status.message : ""
                 })
             }
         )
@@ -1203,7 +1208,8 @@ export function SourceMng(props) {
             <h1 style={{textAlign: 'left'}}>Quản lý nguồn tin</h1>
             <div>
                 <Search defaultValue={searchParams.get('q')}
-                        style={{width: 200, marginTop: "5px", marginBottom: "15px"}} onSearch={onSearch}/>
+                        placeholder={"Tên nguồn tin"}
+                        style={{width: 200, marginTop: "5px", marginBottom: "15px"}} onSearch={onSearch} />
                 <Button type="primary" style={{marginLeft: 'auto', display: "block"}}
                         onClick={() => {
                             if (searchParams.get('q')) {
@@ -1274,20 +1280,20 @@ export function SourceMng(props) {
                                     //         status: currentSourceInfo.status === 1
                                     //     })
                                     // } else {
-                                        setFrequencyFormItemHidden(true)
-                                        setCustomFormItemHidden(false)
-                                        setDataDisplay(currentSourceInfo.sourceCrawls)
-                                        setDataToCallApi(currentSourceInfo.sourceCrawls)
-                                        changeSourceCustomData(currentSourceInfo.sourceCrawls)
-                                        console.log(customData)
-                                        form.setFieldsValue({
-                                            id: currentSourceInfo.id,
-                                            name: currentSourceInfo.name,
-                                            // mode: "Tùy chỉnh",
-                                            mode: "2",
-                                            status: currentSourceInfo.status === 1,
-                                            // custom: currentSourceInfo.sourceCrawls
-                                        })
+                                    setFrequencyFormItemHidden(true)
+                                    setCustomFormItemHidden(false)
+                                    setDataDisplay(currentSourceInfo.sourceCrawls)
+                                    setDataToCallApi(currentSourceInfo.sourceCrawls)
+                                    changeSourceCustomData(currentSourceInfo.sourceCrawls)
+                                    console.log(customData)
+                                    form.setFieldsValue({
+                                        id: currentSourceInfo.id,
+                                        name: currentSourceInfo.name,
+                                        // mode: "Tùy chỉnh",
+                                        mode: "2",
+                                        status: currentSourceInfo.status === 1,
+                                        // custom: currentSourceInfo.sourceCrawls
+                                    })
                                     // }
                                     setVisibleSourceInfo(false)
                                     setVisibleEditSourceInfo(true)
@@ -1316,12 +1322,12 @@ export function SourceMng(props) {
                         {/*    <Descriptions.Item*/}
                         {/*        label="Tần suất">{currentSourceInfo.frequency + " giờ/1 lần"}</Descriptions.Item>*/}
                         {/*    :*/}
-                            <Descriptions.Item label="Tùy chỉnh">
-                                <Table columns={sourceCrawlsColumns} dataSource={currentSourceInfo.sourceCrawls}
-                                       pagination={false}/>
-                                {/*<CustomModeData data={currentSourceInfo.sourceCrawls}/>*/}
-                            </Descriptions.Item>
-                         {/*}*/}
+                        <Descriptions.Item label="Tùy chỉnh">
+                            <Table columns={sourceCrawlsColumns} dataSource={currentSourceInfo.sourceCrawls}
+                                   pagination={false}/>
+                            {/*<CustomModeData data={currentSourceInfo.sourceCrawls}/>*/}
+                        </Descriptions.Item>
+                        {/*}*/}
 
                         <Descriptions.Item label="Ngày tạo">{currentSourceInfo.createTime}</Descriptions.Item>
                         <Descriptions.Item label="Ngày cập nhật">{currentSourceInfo.updateTime}</Descriptions.Item>

@@ -296,6 +296,7 @@ export function UserMng(props) {
             <h1 style={{textAlign: 'left'}}>Quản lý tài khoản</h1>
             <div>
                 <Search defaultValue={searchParams.get('q')}
+                        placeholder={"Tên tài khoản"}
                         style={{width: 200, marginTop: "5px", marginBottom: "15px"}} onSearch={onSearch}/>
                 <Button type="primary" style={{marginLeft: 'auto', display: "block"}}
                         onClick={() => {
