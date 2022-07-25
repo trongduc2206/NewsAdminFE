@@ -1,7 +1,7 @@
 import {Button, Descriptions, Divider, Form, Input, Modal, notification, Switch, Table, Tooltip} from "antd";
 import {useEffect, useState} from "react";
 import UserService from "../service/UserService";
-import {useSearchParams} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import Search from "antd/es/input/Search";
 import {EditOutlined, ExclamationCircleOutlined, LockOutlined, ReloadOutlined, UnlockOutlined} from "@ant-design/icons";
 
@@ -262,6 +262,8 @@ export function UserMng(props) {
         }
 
     }
+    let navigate = useNavigate();
+
     // const onReload = ()
     useEffect(() => {
         const page = searchParams.get('page')
@@ -278,6 +280,15 @@ export function UserMng(props) {
                         setTotal(response.data.data.totalElements)
                     }
                 }
+            ).catch(
+                error => {
+                    console.log(error)
+                    if(error.response.status === 401) {
+                        console.log('token expired')
+                        localStorage.removeItem("user");
+                        navigate("/")
+                    }
+                }
             )
         } else {
             const value = searchParams.get('q')
@@ -286,6 +297,15 @@ export function UserMng(props) {
                     if (response.data.data) {
                         setData(response.data.data.content)
                         setTotal(response.data.data.totalElements)
+                    }
+                }
+            ).catch(
+                error => {
+                    console.log(error)
+                    if(error.response.status === 401) {
+                        console.log('token expired')
+                        localStorage.removeItem("user");
+                        navigate("/")
                     }
                 }
             )

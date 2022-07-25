@@ -10,6 +10,7 @@ export function Login(props) {
     let navigate = useNavigate();
     const onLoginFormFinish = (values) => {
         // console.log(values)
+        values.type='SYSTEM'
         AuthService.signin(values).then(
             response => {
                 console.log(response.data.data.roles)

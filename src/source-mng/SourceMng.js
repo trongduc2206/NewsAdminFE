@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {useSearchParams} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {
     Button,
     Descriptions,
@@ -1144,6 +1144,7 @@ export function SourceMng(props) {
 
     }
     // const onReload = ()
+    let navigate = useNavigate();
     useEffect(() => {
         console.log(data)
         const page = searchParams.get('page')
@@ -1155,9 +1156,18 @@ export function SourceMng(props) {
         if (searchParams.get('q') === null) {
             SourceService.getAll(pageToCallApi, 3).then(
                 response => {
-                    if (response.data.data) {
-                        setData(response.data.data.content)
-                        setTotal(response.data.data.totalElements)
+                        if (response.data.data) {
+                            setData(response.data.data.content)
+                            setTotal(response.data.data.totalElements)
+                        }
+                }
+            ).catch(
+                error => {
+                    console.log(error)
+                    if(error.response.status === 401) {
+                        console.log('token expired')
+                        localStorage.removeItem("user");
+                        navigate("/")
                     }
                 }
             )
@@ -1168,6 +1178,15 @@ export function SourceMng(props) {
                     if (response.data.data) {
                         setData(response.data.data.content)
                         setTotal(response.data.data.totalElements)
+                    }
+                }
+            ).catch(
+                error => {
+                    console.log(error)
+                    if(error.response.status === 401) {
+                        console.log('token expired')
+                        localStorage.removeItem("user");
+                        navigate("/")
                     }
                 }
             )

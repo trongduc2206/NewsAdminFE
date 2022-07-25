@@ -10,7 +10,7 @@ import {
     UserOutlined,
     TeamOutlined,
     DesktopOutlined,
-    ExclamationCircleOutlined
+    ExclamationCircleOutlined, LayoutTwoTone
 } from '@ant-design/icons';
 import {BrowserRouter, Route, Routes, useNavigate} from "react-router-dom";
 import {UserMng} from "./user-mng/UserMng";
@@ -61,7 +61,8 @@ export function MainLayout(props) {
             }}
         >
             <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-                <div className="logo"/>
+                <div className="logo">
+                </div>
                 <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline" items={items}/>
             </Sider>
             <Layout className="site-layout">
